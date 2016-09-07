@@ -1,0 +1,6 @@
+.idea
+error.log
+logs/
+config/routes.php
+config/config.php
+config/db.php
