@@ -14,17 +14,11 @@ class DBFactory
 
     public static function getConnection($driver, $config)
     {
-        switch ($driver) {
-            case 'mysql':
-                return new MySQL($config);
-                break;
-            case 'pgsql':
-                return new PostgreSQL($config);
-                break;
-            default:
-                throw new \Exception("Неверный тип продукта");
-                break;
+        $driver = 'Framework\\DBAdapter\\' . $driver;
+        if (class_exists($driver)) {
+            return new $driver($config);
+        } else {
+            throw new \Exception("Неверный тип продукта");
         }
-
     }
 }

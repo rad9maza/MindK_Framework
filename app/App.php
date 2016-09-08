@@ -15,7 +15,7 @@ class App
     public function __construct($config = [])
     {
         $this->config = $config;
-        $db = DBFactory::getConnection('mysql', $this->config);
+        $db = DBFactory::getConnection('MySQL', $this->config);
     }
 
     public function run()
@@ -27,5 +27,4 @@ class App
     {
 
     }
-
 }
