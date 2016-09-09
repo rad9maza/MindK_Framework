@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rad9maza
- * Date: 04.09.16
- * Time: 11:18
- */
 
 namespace Framework\DBAdapter;
 

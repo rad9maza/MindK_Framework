@@ -6,7 +6,7 @@ class PostgreSQL extends AbstractSQL
 {
     public function __construct($config = [])
     {
-//        echo var_dump($config['db']['PostgreSQL']);
+//        echo var_dump($config['PostgreSQL']);
     }
 
 }
