@@ -11,40 +11,94 @@ class Router
         $this->config = $config;
     }
 
-    public function get_route()
+    /**
+     * Function selects the desired Route
+     * @return array with controller, action and params (if present)
+     */
+    public function getRoute()
     {
-        $uri = $this->get_uri();
-        $request_method = $this->get_request_method();
-
+        $uri = $this->getUri();
+        $request_method = $this->getRequestMethod();
 
         foreach ($this->config as $route_name => $route_array) {
+
             if ($route_array['http_method'] === $request_method) {
-                if (array_key_exists('requirements', $route_array)) {
-                    $this->prepare_pattern($route_array['pattern'], $route_array['requirements']);
-                    return [$route_name => $route_array];
-                } elseif ($route_array['requirements'] === $uri) {
-                    return [$route_name => $route_array];
+
+                $uri_regexp = $this->preparePattern($route_array);
+                preg_match($uri_regexp, $uri, $matches);
+
+                if (count($matches) == 1) {
+                    return [$route_name =>
+                        [
+                            "class" => $route_array["class"],
+                            "method" => $route_array["action"],
+                        ]
+                    ];
+                } elseif (count($matches) > 1) {
+                    return [$route_name =>
+                        [
+                            "class" => $route_array["class"],
+                            "method" => $route_array["action"],
+                            "params" => $this->getParams($route_array['requirements'], $matches),
+                        ]
+                    ];
                 }
             }
         }
+        return [
+            "error" => "Pattern not exist",
+        ];
     }
 
-    public function prepare_pattern($pattern, $requirements)
+    /**
+     * Function create regular expression for compare with URI
+     * @param $route_array
+     * @return string pattern
+     */
+    public function preparePattern($route_array)
     {
-        echo var_dump($pattern);
-        echo var_dump($requirements);
+        $pattern = $route_array['pattern'];
+        $pattern = str_replace('/', '\/', $pattern);
 
+        if (array_key_exists('requirements', $route_array)) {
+            foreach ($route_array['requirements'] AS $item) {
+                $pattern = preg_replace("/{.*}/U", "(" . $item . "?)", $pattern, 1);
+            }
+        }
+
+        return '/^' . $pattern . '$/';
     }
 
-    public
-    function get_uri()
+    /**
+     * @return $_SERVER['REQUEST_URI']
+     */
+    public function getUri()
     {
         return $_SERVER['REQUEST_URI'];
     }
 
-    public
-    function get_request_method()
+    /**
+     * @return $_SERVER['REQUEST_METHOD']
+     */
+    public function getRequestMethod()
     {
         return $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
+     * Function associates params from $params_array with values in $matches
+     * @param $params_array
+     * @param $matches
+     * @return array $param_name => $param_value
+     */
+    public function getParams($params_array, $matches)
+    {
+        $params = [];
+        $i = 1;
+        foreach ($params_array as $param_name => $param_pattern) {
+            $params[$param_name] = $matches[$i];
+            $i++;
+        }
+        return $params;
     }
 }
