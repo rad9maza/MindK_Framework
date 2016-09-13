@@ -5,6 +5,10 @@ namespace App;
 use Framework\DBAdapter\DBFactory;
 use Framework\Router;
 
+/**
+ * Class App
+ * @package App
+ */
 class App
 {
     public $config;
@@ -23,7 +27,7 @@ class App
 
     public function run()
     {
-        echo var_dump($this->router->get_route());
+        echo var_dump($this->router->getRoute());
     }
 
     public function done()
