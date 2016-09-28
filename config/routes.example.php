@@ -6,7 +6,7 @@ return [
             'pattern' => '/products',
             'http_method' => 'GET',
             'class' => 'Products',
-            'action' => 'get_all_posts'
+            'action' => 'get_all_products'
         ],
     'get_products_by_id' =>
         [

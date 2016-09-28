@@ -1,10 +1,11 @@
 <?php
 
-namespace Framework;
+namespace Framework\Router;
 
 class Router
 {
     private $config;
+    private $request;
 
     public function __construct($config = [])
     {
@@ -15,10 +16,11 @@ class Router
      * Function selects the desired Route
      * @return array with controller, action and params (if present)
      */
-    public function getRoute()
+    public function getRoute($request)
     {
-        $uri = $this->getUri();
-        $request_method = $this->getRequestMethod();
+        $this->request = $request;
+        $uri = $request->getUri();
+        $request_method = $request->getRequestMethod();
 
         foreach ($this->config as $route_name => $route_array) {
 
@@ -28,18 +30,22 @@ class Router
                 preg_match($uri_regexp, $uri, $matches);
 
                 if (count($matches) == 1) {
-                    return [$route_name =>
-                        [
-                            "class" => $route_array["class"],
-                            "method" => $route_array["action"],
+                    return [
+                        "name" => $route_name,
+                        "class" => $route_array["class"],
+                        "method" => $route_array["action"],
+                        "params" => [
+                            "request" => $request
                         ]
                     ];
                 } elseif (count($matches) > 1) {
-                    return [$route_name =>
-                        [
-                            "class" => $route_array["class"],
-                            "method" => $route_array["action"],
-                            "params" => $this->getParams($route_array['requirements'], $matches),
+                    return [
+                        "name" => $route_name,
+                        "class" => $route_array["class"],
+                        "method" => $route_array["action"],
+                        "params" => [
+                            $this->getParams($route_array['requirements'], $matches),
+
                         ]
                     ];
                 }
@@ -70,22 +76,6 @@ class Router
     }
 
     /**
-     * @return $_SERVER['REQUEST_URI']
-     */
-    public function getUri()
-    {
-        return $_SERVER['REQUEST_URI'];
-    }
-
-    /**
-     * @return $_SERVER['REQUEST_METHOD']
-     */
-    public function getRequestMethod()
-    {
-        return $_SERVER['REQUEST_METHOD'];
-    }
-
-    /**
      * Function associates params from $params_array with values in $matches
      * @param $params_array
      * @param $matches
@@ -99,6 +89,7 @@ class Router
             $params[$param_name] = $matches[$i];
             $i++;
         }
+        $params["request"] = $this->request;
         return $params;
     }
 }
