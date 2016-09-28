@@ -3,7 +3,8 @@
 namespace App;
 
 use Framework\DBAdapter\DBFactory;
-use Framework\Router;
+use Framework\Request\Request;
+use Framework\Router\Router;
 
 /**
  * Class App
@@ -21,13 +22,24 @@ class App
     {
         $this->config = $config;
         $this->db = DBFactory::getConnection('MySQL', $this->config['db']);
-        $this->router = new Router($this->config["routes"]);
-
+        $this->request = new Request();
     }
 
     public function run()
     {
-        echo var_dump($this->router->getRoute());
+        $router = new Router($this->config["routes"]);
+        $route = $router->getRoute($this->request);
+        var_dump($route);
+        if (!$route) {
+
+        } else {
+            $response = call_user_func_array('App\\Controller\\' . $route['class'] . '::' . $route['method'], $route['params']);
+        }
+
+//        if (!$response instanceof Response) {
+//            $response = new Response('Bad Response Type Error', 500);
+//        }
+//        $response->send();
     }
 
     public function done()
