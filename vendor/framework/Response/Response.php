@@ -6,7 +6,23 @@ namespace Framework\Response;
 class Response
 {
     protected $headers = [];
+
+    public function getHeaders() {
+        return $this->headers;
+    }
+    public function setHeader($header, $value) {
+        $this->headers[$header] = $value;
+    }
+
     public $content = '';
+
+    public function sendContent() {
+        echo $this->content;
+    }
+    public function setContent($data) {
+        $this->content = $data;
+    }
+
     public $code;
     public $content_type = 'text/html';
     const STATUS_MSGS = [
@@ -22,9 +38,6 @@ class Response
         $this->setHeader('Content-Type', $this->content_type);
     }
 
-    /**
-     * Send response
-     */
     public function send()
     {
         $this->sendHeaders();
@@ -41,19 +54,5 @@ class Response
         }
     }
 
-    public function setHeader($header, $value)
-    {
-        $this->headers[$header] = $value;
-    }
-
-    public function sendContent()
-    {
-        echo $this->content;
-    }
-
-    public function setContent($data)
-    {
-        $this->content = $data;
-    }
 
 }

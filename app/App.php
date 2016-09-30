@@ -5,6 +5,8 @@ namespace App;
 use Framework\DBAdapter\DBFactory;
 use Framework\Request\Request;
 use Framework\Router\Router;
+use Framework\Response\Response;
+
 
 /**
  * Class App
@@ -31,15 +33,15 @@ class App
         $route = $router->getRoute($this->request);
         var_dump($route);
         if (!$route) {
-
+            $response = new Response('Not Found', 404);
         } else {
             $response = call_user_func_array('App\\Controller\\' . $route['class'] . '::' . $route['method'], $route['params']);
         }
 
-//        if (!$response instanceof Response) {
-//            $response = new Response('Bad Response Type Error', 500);
-//        }
-//        $response->send();
+        if (!$response instanceof Response) {
+            $response = new Response('Bad Response Type Error', 500);
+        }
+        $response->send();
     }
 
     public function done()
