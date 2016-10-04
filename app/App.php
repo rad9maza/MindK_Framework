@@ -51,12 +51,11 @@ class App
             $rClass = new ReflectionClass($class);
             $rMethod = $rClass->getMethod($method);
             $rParam = $rMethod->getParameters();
+
             foreach ($rParam as $p) {
-                if ($p->getClass() != null) {
-                    if ($p->getClass()->getName() == 'Framework\Request\Request') {
-                        $route['params'][0]['request'] = $this->request;
+                if ($p->getClass() != null && $p->getClass()->getName() == 'Framework\Request\Request') {
+                        $route['params']['request'] = $this->request;
                         break;
-                    }
                 }
             }
 
@@ -64,7 +63,7 @@ class App
             if (empty($rParam)) {
                 $response = call_user_func([$class, $method]);
             } else {
-                $response = call_user_func_array([$class, $method], $route['params'][0]);
+                $response = call_user_func_array([$class, $method], $route['params']);
             }
 
             if (!$response instanceof Response) {

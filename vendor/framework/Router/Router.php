@@ -37,17 +37,15 @@ class Router
                         "name" => $route_name,
                         "class" => $route_array["class"],
                         "method" => $route_array["action"],
-                        "params" => [
-                        ]
+                        "params" => []
+
                     ];
                 } elseif (count($matches) > 1) {
                     return [
                         "name" => $route_name,
                         "class" => $route_array["class"],
                         "method" => $route_array["action"],
-                        "params" => [
-                            $this->getParams($route_array['requirements'], $matches),
-                        ]
+                        "params" => $this->getParams($route_array['requirements'], $matches),
                     ];
                 }
             }
