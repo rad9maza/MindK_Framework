@@ -17,6 +17,9 @@ use ReflectionClass;
  */
 class App
 {
+    /**
+     * @var array contains Config of Application
+     */
     public $config;
 
     /**
@@ -33,19 +36,21 @@ class App
     public function run()
     {
         try {
+            //get route
             $router = new Router($this->config["routes"]);
             $route = $router->getRoute($this->request);
 
+            //generate controller className and methodName
             $className = 'App\\Controller\\' . $route['class'] . 'Controller';
             $method = $route['method'];
 
+
             $class = new $className();
 
+            //detects necessity Request for action
             $rClass = new ReflectionClass($class);
             $rMethod = $rClass->getMethod($method);
             $rParam = $rMethod->getParameters();
-
-
             foreach ($rParam as $p) {
                 if ($p->getClass() != null) {
                     if ($p->getClass()->getName() == 'Framework\Request\Request') {
@@ -55,6 +60,7 @@ class App
                 }
             }
 
+            //depending on the availability of parameters choose call method
             if (empty($rParam)) {
                 $response = call_user_func([$class, $method]);
             } else {
