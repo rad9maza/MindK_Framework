@@ -3,17 +3,48 @@
 namespace Framework\Request;
 
 
+/**
+ * Class Request
+ * Singleton implementation request
+ * @package Framework\Request
+ */
 class Request
 {
-    public function __construct()
+    /**
+     * @var null stores instance of Request
+     */
+    private static $_instance = null;
+
+    private function __construct()
     {
     }
 
+    /**
+     * @return Request instance
+     */
+    public static function create()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self();
+        }
+        return self::$_instance;
+    }
+
+    /**
+     * @param $name
+     * Method return $_Post[$name]
+     * @return null|string
+     */
     public function takePost($name)
     {
         return (array_key_exists($name, $_POST)) ? htmlspecialchars($_POST[$name]) : null;
     }
 
+    /**
+     * @param $name
+     * Method return $_Get[$name]
+     * @return null|string
+     */
     public function takeGet($name)
     {
         return (array_key_exists($name, $_GET)) ? htmlspecialchars($_GET[$name]) : null;
