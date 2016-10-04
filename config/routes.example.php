@@ -3,14 +3,14 @@
 return [
     'get_all_products' =>
         [
-            'pattern' => '/products',
+            'pattern' => '/products/',
             'http_method' => 'GET',
             'class' => 'Products',
             'action' => 'get_all_products'
         ],
     'get_products_by_id' =>
         [
-            'pattern' => '/products/{id}',
+            'pattern' => '/products/{id}/',
             'http_method' => 'GET',
             'class' => 'Products',
             'action' => 'get_product',
