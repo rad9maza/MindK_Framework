@@ -3,9 +3,12 @@
 namespace App;
 
 use Framework\DBAdapter\DBFactory;
+use Framework\Exception\NotFoundException;
 use Framework\Request\Request;
+use Framework\Response\ErrorResponse;
 use Framework\Router\Router;
 use Framework\Response\Response;
+use ReflectionClass;
 
 
 /**
@@ -24,24 +27,51 @@ class App
     {
         $this->config = $config;
         $this->db = DBFactory::getConnection('MySQL', $this->config['db']);
-        $this->request = new Request();
+        $this->request = Request::create();
     }
 
     public function run()
     {
-        $router = new Router($this->config["routes"]);
-        $route = $router->getRoute($this->request);
-        var_dump($route);
-        if (!$route) {
-            $response = new Response('Not Found', 404);
-        } else {
-            $response = call_user_func_array('App\\Controller\\' . $route['class'] . '::' . $route['method'], $route['params']);
+        try {
+            $router = new Router($this->config["routes"]);
+            $route = $router->getRoute($this->request);
+
+            $className = 'App\\Controller\\' . $route['class'] . 'Controller';
+            $method = $route['method'];
+
+            $class = new $className();
+
+            $rClass = new ReflectionClass($class);
+            $rMethod = $rClass->getMethod($method);
+            $rParam = $rMethod->getParameters();
+
+
+            foreach ($rParam as $p) {
+                if ($p->getClass() != null) {
+                    if ($p->getClass()->getName() == 'Framework\Request\Request') {
+                        $route['params'][0]['request'] = $this->request;
+                        break;
+                    }
+                }
+            }
+
+            if (empty($rParam)) {
+                $response = call_user_func([$class, $method]);
+            } else {
+                $response = call_user_func_array([$class, $method], $route['params'][0]);
+            }
+
+            if (!$response instanceof Response) {
+                $response = new Response('Bad Response Type Error', 500);
+            }
+
+
+        } catch (NotFoundException $e) {
+            $response = new ErrorResponse($e->getMessage(), 404);
         }
 
-        if (!$response instanceof Response) {
-            $response = new Response('Bad Response Type Error', 500);
-        }
         $response->send();
+
     }
 
     public function done()
