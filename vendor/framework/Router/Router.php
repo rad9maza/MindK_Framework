@@ -60,7 +60,7 @@ class Router
      */
     public function generateRoute($route_name, $params = array())
     {
-        $result = "/";
+        $result = null;
         if (array_key_exists($route_name, $this->config)) {
             $route_uri = $this->config[$route_name]["pattern"];
             foreach ($params as $param_name => $param_value) {

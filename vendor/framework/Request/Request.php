@@ -19,6 +19,10 @@ class Request
     {
     }
 
+    private function clone()
+    {
+    }
+
     /**
      * @return Request instance
      */
@@ -64,5 +68,9 @@ class Request
     public function getRequestMethod()
     {
         return $_SERVER['REQUEST_METHOD'];
+    }
+
+    public function take($param) {
+        //TODO taking any params from _SERVER
     }
 }

@@ -17,18 +17,18 @@ class Response
     /**
      * @var int store status code of Response
      */
-    public $code;
+    protected $code;
 
     /**
      * @var string store content_type header of response
      * @default 'text/html'
      */
-    public $content_type = 'text/html';
+    protected $content_type = 'text/html';
 
     /**
      * @var string store Response content
      */
-    public $content = '';
+    protected $content = '';
 
     /**
      * @return array with Response headers
@@ -81,7 +81,7 @@ class Response
     /**
      * Method send Response headers
      */
-    private function sendHeaders()
+    protected function sendHeaders()
     {
         header("HTTP/1.1 " . $this->code . " " . self::STATUS_MSGS[$this->code]);
         if (!empty($this->headers)) {
@@ -94,7 +94,7 @@ class Response
     /**
      * Method send Response content
      */
-    private function sendContent()
+    protected function sendContent()
     {
         echo $this->content;
     }

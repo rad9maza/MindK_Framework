@@ -17,7 +17,7 @@ class ProductsController extends BaseController
      */
     public function get_all_products()
     {
-        return $this->render("", "get_all_products", 200);
+        return $this->render("", "get_all_products");
     }
 
     /**
@@ -27,6 +27,6 @@ class ProductsController extends BaseController
      */
     public function get_product($id, Request $request)
     {
-        return $this->render("", "get_product $id", 200);
+        return $this->render("", "get_product $id");
     }
 }
